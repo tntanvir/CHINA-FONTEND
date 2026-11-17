@@ -1,0 +1,668 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
+import {
+  Bell,
+  Boxes,
+  Building2,
+  ClipboardList,
+  CreditCard,
+  Database,
+  Headphones,
+  Home,
+  KeyRound,
+  Layers3,
+  LayoutDashboard,
+  LockKeyhole,
+  MessageCircle,
+  PackageCheck,
+  Percent,
+  Radio,
+  Search,
+  Settings,
+  ShieldCheck,
+  Star,
+  UserRound,
+  Users,
+  FileArchive,
+  ShoppingCart,
+  UploadCloud,
+  AlertTriangle,
+  BarChart3,
+  Menu,
+  ChevronRight,
+  ExternalLink,
+  Sparkles,
+  Cpu,
+  ChevronDown,
+  PanelLeftClose,
+  PanelLeftOpen,
+  PanelLeft,
+} from "lucide-react";
+
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
+import UserAccountMenu from "@/components/module/Home/UserAccountMenu";
+import NotificationBell from "@/components/module/Dashboard/NotificationBell";
+import { ModeToggle } from "@/components/themes/darkandlight";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { toast } from "sonner";
+import { getRoleDashboardPath, normalizeRole } from "@/lib/auth-routes";
+import { useAuthStore } from "@/store/authStore";
+
+const adminNavGroups = [
+  {
+    title: "Operations & Catalog",
+    items: [
+      { label: "Admin Overview", href: "/admin", icon: LayoutDashboard },
+      { label: "Orders & Inquiries", href: "/admin/orders", icon: PackageCheck },
+      { label: "Customer Accounts", href: "/admin/customers", icon: Users },
+      { label: "Products Catalog", href: "/admin/products", icon: Boxes },
+      { label: "Categories", href: "/admin/categories", icon: Layers3 },
+      { label: "Brands", href: "/admin/brands", icon: Building2 },
+      { label: "Inventory & Stock", href: "/admin/inventory", icon: Boxes },
+    ],
+  },
+  {
+    title: "Finance & Analytics",
+    items: [
+      { label: "Payments & Invoices", href: "/admin/payments", icon: CreditCard },
+      { label: "Reports & Sales", href: "/admin/reports", icon: BarChart3 },
+      { label: "Discounts & Coupons", href: "/admin/coupons", icon: Percent },
+      { label: "Customer Reviews", href: "/admin/reviews", icon: Star },
+    ],
+  },
+  {
+    title: "Communication & Support",
+    items: [
+      { label: "Support Tickets", href: "/admin/support", icon: Headphones },
+      { label: "Live Engineering Chat", href: "/admin/chat", icon: MessageCircle },
+      { label: "Notifications", href: "/admin/notifications", icon: Bell },
+    ],
+  },
+  {
+    title: "Admin Account",
+    items: [
+      { label: "My Profile", href: "/admin/profile", icon: UserRound },
+      { label: "Security & Password", href: "/admin/change-password", icon: KeyRound },
+    ],
+  },
+];
+
+const superAdminNavGroups = [
+  {
+    title: "Command Center",
+    items: [
+      { label: "Platform Overview", href: "/super-admin", icon: ShieldCheck },
+      { label: "Orders & Inquiries", href: "/super-admin/orders", icon: PackageCheck },
+      { label: "Admin Management", href: "/super-admin/admin-management", icon: Users },
+      { label: "Roles & RBAC", href: "/super-admin/roles-permissions", icon: LockKeyhole },
+      { label: "Security Center", href: "/super-admin/security-center", icon: AlertTriangle },
+    ],
+  },
+  {
+    title: "Platform Controls",
+    items: [
+      { label: "Global Payments", href: "/super-admin/payments", icon: CreditCard },
+      { label: "Business Analytics", href: "/super-admin/business-analytics", icon: BarChart3 },
+      { label: "Audit Logs", href: "/super-admin/audit-logs", icon: ClipboardList },
+      { label: "System Monitoring", href: "/super-admin/system-monitoring", icon: Database },
+      { label: "Realtime Telemetry", href: "/super-admin/realtime", icon: Radio },
+      { label: "System Settings", href: "/super-admin/settings", icon: Settings },
+    ],
+  },
+];
+
+const customerNavGroups = [
+  {
+    title: "Manufacturing Workspace",
+    items: [
+      { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+      { label: "My PCB Orders", href: "/dashboard/orders", icon: PackageCheck },
+      { label: "PCB Quotes", href: "/dashboard/quotes", icon: FileArchive },
+      { label: "Gerber Files & DFM", href: "/dashboard/gerber", icon: UploadCloud },
+      { label: "Payments & Invoices", href: "/dashboard/payments", icon: CreditCard },
+      { label: "Shopping Cart", href: "/dashboard/cart", icon: ShoppingCart },
+    ],
+  },
+  {
+    title: "Engineering Support",
+    items: [
+      { label: "CAM Live Chat", href: "/dashboard/chat", icon: MessageCircle },
+      { label: "Support Tickets", href: "/dashboard/support", icon: Headphones },
+      { label: "Notifications", href: "/dashboard/notifications", icon: Bell },
+    ],
+  },
+  {
+    title: "Account & Settings",
+    items: [
+      { label: "Shipping Address Book", href: "/dashboard/address-book", icon: Building2 },
+      { label: "My Profile", href: "/dashboard/profile", icon: UserRound },
+      { label: "Security & Password", href: "/dashboard/change-password", icon: KeyRound },
+      { label: "Preferences", href: "/dashboard/settings", icon: Settings },
+    ],
+  },
+];
+
+export default function DashboardShell({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const router = useRouter();
+  const user = useAuthStore((state) => state.user);
+  const isLoading = useAuthStore((state) => state.isLoading);
+  const currentRole = normalizeRole(user?.role);
+
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("dashboard_sidebar_collapsed");
+      if (saved !== null) {
+        setIsCollapsed(saved === "true");
+      }
+    } catch {
+      // LocalStorage not available in this context
+    }
+  }, []);
+
+  const toggleSidebar = () => {
+    setIsCollapsed((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem("dashboard_sidebar_collapsed", String(next));
+      } catch {
+        // LocalStorage not available in this context
+      }
+      return next;
+    });
+  };
+
+  const isSuperAdmin = currentRole === "SUPER_ADMIN";
+  const isAdmin = currentRole === "ADMIN";
+
+  const requiredRole = pathname.startsWith("/super-admin")
+    ? "SUPER_ADMIN"
+    : pathname.startsWith("/admin")
+      ? "ADMIN"
+      : pathname.startsWith("/dashboard")
+        ? "CUSTOMER"
+        : null;
+
+  const allowed =
+    !requiredRole ||
+    currentRole === requiredRole ||
+    isSuperAdmin ||
+    (isAdmin && requiredRole === "CUSTOMER");
+
+  const navGroups = useMemo(() => {
+    if (pathname.startsWith("/super-admin")) {
+      return superAdminNavGroups;
+    }
+    if (pathname.startsWith("/admin")) {
+      return adminNavGroups;
+    }
+    if (pathname.startsWith("/dashboard")) {
+      return customerNavGroups;
+    }
+    if (currentRole === "SUPER_ADMIN") return superAdminNavGroups;
+    if (currentRole === "ADMIN") return adminNavGroups;
+    return customerNavGroups;
+  }, [currentRole, pathname]);
+
+  const isSuperAdminPath = pathname.startsWith("/super-admin");
+  const isAdminPath = pathname.startsWith("/admin");
+
+  const workspaceTitle = isSuperAdminPath
+    ? "Super Admin Console"
+    : isAdminPath
+      ? "Operations Admin"
+      : "Customer Portal";
+
+  const workspaceBadge = isSuperAdminPath
+    ? "Super Admin"
+    : isAdminPath
+      ? "Operations Admin"
+      : "Customer";
+
+  // Compute clean breadcrumbs
+  const currentNavLabel = useMemo(() => {
+    for (const group of navGroups) {
+      for (const item of group.items) {
+        if (pathname === item.href) return item.label;
+      }
+    }
+    if (pathname.startsWith("/dashboard/orders/")) return "Order Details";
+    if (pathname.startsWith("/admin/orders")) return "Orders & Inquiries";
+    if (pathname.startsWith("/super-admin/orders")) return "Orders & Inquiries";
+    return workspaceTitle;
+  }, [navGroups, pathname, workspaceTitle]);
+
+  useEffect(() => {
+    if (isLoading) return;
+    if (!user) {
+      const currentUrl = encodeURIComponent(window.location.pathname + window.location.search);
+      router.replace(`/login?redirect=${currentUrl}`);
+    } else if (!allowed) {
+      const fallback = getRoleDashboardPath(user.role);
+      toast.error(`Access restricted. Redirecting to your workspace.`);
+      router.replace(fallback);
+    }
+  }, [isLoading, router, user, allowed]);
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen bg-slate-50 dark:bg-[#070b14]">
+        {/* Sidebar Skeleton */}
+        <aside className="hidden lg:flex w-72 shrink-0 flex-col border-r border-slate-200/80 bg-white dark:border-slate-800/80 dark:bg-[#0b1220] p-5 space-y-6">
+          <div className="flex items-center gap-3">
+            <Skeleton className="size-10 rounded-xl" />
+            <div className="space-y-1.5 flex-1">
+              <Skeleton className="h-4 w-28" />
+              <Skeleton className="h-3 w-20" />
+            </div>
+          </div>
+          <div className="space-y-3 pt-4">
+            <Skeleton className="h-3 w-20" />
+            <Skeleton className="h-9 w-full rounded-xl" />
+            <Skeleton className="h-9 w-full rounded-xl" />
+            <Skeleton className="h-9 w-full rounded-xl" />
+          </div>
+          <div className="space-y-3 pt-4">
+            <Skeleton className="h-3 w-24" />
+            <Skeleton className="h-9 w-full rounded-xl" />
+            <Skeleton className="h-9 w-full rounded-xl" />
+          </div>
+        </aside>
+
+        {/* Main Content Area Skeleton */}
+        <div className="flex flex-1 flex-col min-w-0">
+          {/* Header Skeleton */}
+          <header className="flex h-16 items-center justify-between border-b border-slate-200/80 bg-white/80 px-6 dark:border-slate-800/80 dark:bg-[#0b1220]/80">
+            <div className="flex items-center gap-3">
+              <Skeleton className="h-5 w-36" />
+              <Skeleton className="h-4 w-24 rounded-full" />
+            </div>
+            <div className="flex items-center gap-3">
+              <Skeleton className="size-9 rounded-xl" />
+              <Skeleton className="size-9 rounded-xl" />
+              <Skeleton className="size-9 rounded-full" />
+            </div>
+          </header>
+
+          {/* Page Body Skeleton */}
+          <main className="p-6 space-y-6">
+            <div className="flex justify-between items-center">
+              <div className="space-y-2">
+                <Skeleton className="h-7 w-48" />
+                <Skeleton className="h-4 w-72" />
+              </div>
+              <Skeleton className="h-10 w-32 rounded-xl" />
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="p-5 rounded-2xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-[#0b1220] space-y-2">
+                  <Skeleton className="h-3.5 w-24" />
+                  <Skeleton className="h-8 w-16" />
+                  <Skeleton className="h-3 w-32" />
+                </div>
+              ))}
+            </div>
+
+            <div className="p-6 rounded-2xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-[#0b1220] space-y-4">
+              <Skeleton className="h-6 w-44" />
+              <div className="space-y-3">
+                <Skeleton className="h-12 w-full rounded-xl" />
+                <Skeleton className="h-12 w-full rounded-xl" />
+                <Skeleton className="h-12 w-full rounded-xl" />
+              </div>
+            </div>
+          </main>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null;
+  }
+
+  if (!allowed) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-slate-50 p-6 dark:bg-[#070b14]">
+        <div className="max-w-md rounded-3xl border border-rose-200 bg-white p-8 text-center shadow-2xl dark:border-rose-900/40 dark:bg-[#0b1220]">
+          <div className="mx-auto flex size-14 items-center justify-center rounded-2xl bg-rose-50 text-rose-600 dark:bg-rose-950/50 dark:text-rose-400">
+            <LockKeyhole className="size-7" />
+          </div>
+          <h1 className="mt-4 text-2xl font-black text-slate-900 dark:text-white">Access Restricted</h1>
+          <p className="mt-2 text-xs leading-relaxed text-slate-600 dark:text-slate-400">
+            This module requires <strong className="text-slate-900 dark:text-white">{requiredRole?.replace("_", " ")}</strong> privileges. You are currently authenticated as <strong className="text-slate-900 dark:text-white">{currentRole.replace("_", " ")}</strong>.
+          </p>
+          <div className="mt-6 flex flex-col gap-2.5 sm:flex-row sm:justify-center">
+            {currentRole === "ADMIN" ? (
+              <Button asChild className="rounded-xl bg-emerald-600 text-xs font-bold text-white hover:bg-emerald-500">
+                <Link href="/admin">Go to Admin Portal</Link>
+              </Button>
+            ) : (
+              <Button asChild className="rounded-xl bg-emerald-600 text-xs font-bold text-white hover:bg-emerald-500">
+                <Link href="/dashboard">Go to Customer Workspace</Link>
+              </Button>
+            )}
+            <Button asChild variant="outline" className="rounded-xl text-xs font-bold">
+              <Link href="/login">Switch Account</Link>
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const renderSidebarContent = (collapsed: boolean) => (
+    <TooltipProvider delayDuration={50}>
+      <div className="flex h-full flex-col">
+        {/* Brand & Workspace Identity */}
+        <div className={`flex h-20 items-center border-b border-slate-200/80 dark:border-slate-800/80 transition-all ${
+          collapsed ? "justify-center px-2" : "justify-between px-5"
+        }`}>
+          {collapsed ? (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  type="button"
+                  onClick={toggleSidebar}
+                  className="group flex flex-col items-center justify-center gap-1 focus:outline-none cursor-pointer"
+                  aria-label="Expand sidebar"
+                >
+                  <div className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-tr from-emerald-600 via-teal-600 to-emerald-500 text-white shadow-md shadow-emerald-500/20 group-hover:scale-105 transition-transform">
+                    <Cpu className="size-5" />
+                  </div>
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="right" sideOffset={12} className="font-bold text-xs bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900">
+                FEITIAN PCB - Click to expand drawer
+              </TooltipContent>
+            </Tooltip>
+          ) : (
+            <>
+              <Link href="/" className="flex items-center gap-3 group">
+                <div className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-tr from-emerald-600 via-teal-600 to-emerald-500 text-white shadow-md shadow-emerald-500/20 group-hover:scale-105 transition-transform">
+                  <Cpu className="size-5" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-sm font-black tracking-tight text-slate-900 dark:text-white">FEITIAN</span>
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-600 dark:text-emerald-400">PCB</span>
+                  </div>
+                  <p className="text-[11px] font-medium text-slate-500 dark:text-slate-400">Electronics Cloud</p>
+                </div>
+              </Link>
+
+              <div className="flex items-center gap-1.5">
+                <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[10px] font-mono font-bold uppercase text-emerald-800 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-300">
+                  <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  {workspaceBadge}
+                </span>
+
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      type="button"
+                      onClick={toggleSidebar}
+                      className="hidden lg:flex size-8 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-slate-800 dark:hover:text-slate-200 transition cursor-pointer"
+                      aria-label="Minimize sidebar"
+                    >
+                      <PanelLeftClose className="size-4" />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent side="right" sideOffset={8} className="text-xs font-bold">
+                    Minimize sidebar (Drawer)
+                  </TooltipContent>
+                </Tooltip>
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* Navigation Groups */}
+        <nav className={`flex-1 overflow-y-auto scrollbar-thin transition-all ${
+          collapsed ? "p-2 space-y-4" : "p-3.5 space-y-6"
+        }`}>
+          {navGroups.map((group, groupIdx) => (
+            <div key={group.title}>
+              {collapsed ? (
+                groupIdx > 0 ? (
+                  <div className="my-2.5 mx-2 h-px bg-slate-200/80 dark:bg-slate-800/80" />
+                ) : null
+              ) : (
+                <p className="mb-2 px-3 text-[10px] font-black uppercase tracking-[0.16em] text-slate-500 dark:text-slate-400">
+                  {group.title}
+                </p>
+              )}
+              <div className="grid gap-1">
+                {group.items.map((item) => {
+                  const Icon = item.icon;
+                  const active = pathname === item.href || (item.href !== "/dashboard" && item.href !== "/admin" && item.href !== "/super-admin" && pathname.startsWith(`${item.href}/`));
+
+                  if (collapsed) {
+                    return (
+                      <Tooltip key={item.href}>
+                        <TooltipTrigger asChild>
+                          <Link
+                            href={item.href}
+                            onClick={() => setMobileMenuOpen(false)}
+                            className={`group flex size-11 items-center justify-center rounded-xl mx-auto transition-all ${
+                              active
+                                ? "bg-gradient-to-r from-emerald-600 via-emerald-600 to-teal-600 text-white shadow-md shadow-emerald-500/20 font-black"
+                                : "text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/60 dark:hover:text-white"
+                            }`}
+                          >
+                            <Icon className={`size-5 shrink-0 transition-transform group-hover:scale-110 ${active ? "text-white" : "text-slate-500 dark:text-slate-400 group-hover:text-emerald-500"}`} />
+                          </Link>
+                        </TooltipTrigger>
+                        <TooltipContent
+                          side="right"
+                          sideOffset={14}
+                          className="flex flex-col gap-0.5 rounded-xl border border-slate-800/80 bg-slate-900 px-3 py-2 text-white shadow-2xl dark:border-slate-200/30 dark:bg-slate-100 dark:text-slate-900 z-50 animate-in fade-in-0 zoom-in-95"
+                        >
+                          <span className="text-[10px] font-extrabold uppercase tracking-wider text-emerald-400 dark:text-emerald-700">
+                            {group.title}
+                          </span>
+                          <span className="text-xs font-black">{item.label}</span>
+                          {active && (
+                            <span className="text-[9px] font-semibold text-emerald-300 dark:text-emerald-600 flex items-center gap-1">
+                              <span className="size-1.5 rounded-full bg-emerald-400" /> Active View
+                            </span>
+                          )}
+                        </TooltipContent>
+                      </Tooltip>
+                    );
+                  }
+
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`group flex items-center justify-between rounded-xl px-3 py-2 text-xs font-bold transition-all ${
+                        active
+                          ? "bg-gradient-to-r from-emerald-600 via-emerald-600 to-teal-600 text-white shadow-md shadow-emerald-500/20 font-black"
+                          : "text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/60 dark:hover:text-white"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <Icon className={`size-4 shrink-0 transition-transform group-hover:scale-110 ${active ? "text-white" : "text-slate-500 dark:text-slate-400 group-hover:text-emerald-500"}`} />
+                        <span>{item.label}</span>
+                      </div>
+                      {active && <ChevronRight className="size-3 text-white/80" />}
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </nav>
+
+        {/* Sidebar Footer Widget: Factory Status & Quick Actions */}
+        <div className={`border-t border-slate-200/80 dark:border-slate-800/80 bg-slate-50/50 dark:bg-[#070b14]/70 transition-all ${
+          collapsed ? "p-2.5 flex justify-center" : "p-3"
+        }`}>
+          {collapsed ? (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="flex size-10 items-center justify-center rounded-xl border border-emerald-200/80 bg-white shadow-2xs dark:border-emerald-500/20 dark:bg-[#0b1220] cursor-pointer">
+                  <span className="size-2.5 rounded-full bg-emerald-500 animate-pulse" />
+                </div>
+              </TooltipTrigger>
+              <TooltipContent side="right" sideOffset={12} className="text-xs font-bold">
+                CAM DFM Engine Online (24/7 Production)
+              </TooltipContent>
+            </Tooltip>
+          ) : (
+            <div className="rounded-xl border border-emerald-200/80 bg-white p-3 shadow-2xs dark:border-emerald-500/20 dark:bg-[#0b1220]">
+              <div className="flex items-center justify-between">
+                <span className="flex items-center gap-1.5 text-[11px] font-bold text-slate-800 dark:text-slate-200">
+                  <span className="size-2 rounded-full bg-emerald-500 animate-pulse" />
+                  CAM DFM Engine
+                </span>
+                <span className="text-[10px] font-mono font-bold text-emerald-600 dark:text-emerald-400">ONLINE</span>
+              </div>
+              <p className="mt-1 text-[10px] text-slate-500 dark:text-slate-400 leading-tight">
+                Direct Wuping high-speed production line active 24/7.
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+    </TooltipProvider>
+  );
+
+  return (
+    <div className="min-h-screen bg-slate-50/80 text-slate-900 dark:bg-[#060913] dark:text-slate-100 transition-colors duration-200">
+      {/* Desktop Sidebar */}
+      <aside className={`fixed inset-y-0 left-0 z-40 hidden border-r border-slate-200/80 bg-white shadow-xl dark:border-slate-800 dark:bg-[#070b14] lg:block transition-all duration-300 ease-in-out ${
+        isCollapsed ? "w-[76px]" : "w-72"
+      }`}>
+        {renderSidebarContent(isCollapsed)}
+      </aside>
+
+      {/* Main Content Area */}
+      <div className={`transition-all duration-300 ease-in-out ${
+        isCollapsed ? "lg:pl-[76px]" : "lg:pl-72"
+      }`}>
+        {/* Top Sticky Header */}
+        <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/85 shadow-2xs backdrop-blur-md dark:border-slate-800 dark:bg-[#070b14]/85 transition-colors duration-200">
+          <div className="flex min-h-[64px] items-center justify-between gap-3 px-4 py-2.5 sm:px-6">
+            {/* Left: Mobile trigger, Desktop Drawer Toggle & Breadcrumb */}
+            <div className="flex items-center gap-3">
+              <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+                <SheetTrigger asChild>
+                  <Button variant="outline" size="icon" className="size-9 rounded-xl border-slate-200 dark:border-slate-800 lg:hidden" aria-label="Open navigation menu">
+                    <Menu className="size-4 text-slate-700 dark:text-slate-200" />
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="left" className="w-[84vw] max-w-xs border-slate-200 bg-white p-0 text-slate-900 dark:border-slate-800 dark:bg-[#070b14] dark:text-white">
+                  {renderSidebarContent(false)}
+                </SheetContent>
+              </Sheet>
+
+              {/* Desktop Drawer Toggle Button */}
+              <TooltipProvider delayDuration={50}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={toggleSidebar}
+                      className="hidden lg:flex size-9 rounded-xl border-slate-200 dark:border-slate-800 text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white transition-colors"
+                      aria-label={isCollapsed ? "Expand sidebar drawer" : "Minimize sidebar drawer"}
+                    >
+                      {isCollapsed ? (
+                        <PanelLeftOpen className="size-4 text-emerald-600 dark:text-emerald-400" />
+                      ) : (
+                        <PanelLeftClose className="size-4 text-slate-600 dark:text-slate-400" />
+                      )}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom" sideOffset={6} className="text-xs font-bold">
+                    {isCollapsed ? "Expand sidebar drawer" : "Minimize to icons drawer"}
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              {/* Breadcrumb Title */}
+              <div className="hidden sm:flex items-center gap-2 text-xs font-bold">
+                <Link href="/" className="text-slate-400 hover:text-emerald-600 transition flex items-center gap-1">
+                  <Home className="size-3.5" />
+                  <span>Home</span>
+                </Link>
+                <span className="text-slate-300 dark:text-slate-700">/</span>
+                <span className="text-slate-500 dark:text-slate-400">{workspaceTitle}</span>
+                <span className="text-slate-300 dark:text-slate-700">/</span>
+                <span className="text-slate-900 dark:text-white font-extrabold">{currentNavLabel}</span>
+              </div>
+            </div>
+
+            {/* Middle: Quick Search */}
+            <div className="relative hidden md:block max-w-sm flex-1">
+              <Search className="pointer-events-none absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-slate-400" />
+              <Input
+                className="h-9 rounded-xl border-slate-200 bg-slate-50/90 pl-9 pr-8 text-xs shadow-2xs dark:border-slate-800 dark:bg-slate-900/60 placeholder:text-slate-400 focus-visible:ring-emerald-500"
+                placeholder="Search orders, Gerber files, invoices..."
+              />
+              <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 rounded border border-slate-200 bg-white px-1.5 py-0.5 text-[9px] font-mono font-bold text-slate-400 dark:border-slate-800 dark:bg-slate-900">
+                ⌘K
+              </span>
+            </div>
+
+            {/* Right: Actions, Theme Mode, Notifications, User Menu */}
+            <div className="flex items-center gap-2 sm:gap-2.5">
+              {/* Customer quick CTA: New PCB Quote */}
+              {!isSuperAdminPath && !isAdminPath && (
+                <Button asChild size="sm" className="hidden sm:inline-flex h-9 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs gap-1.5 shadow-md shadow-emerald-500/15 cursor-pointer">
+                  <Link href="/pcb-quote">
+                    <Sparkles className="size-3.5" />
+                    <span>New Quote</span>
+                  </Link>
+                </Button>
+              )}
+
+              {/* Mode Toggle (White / Dark / Auto) */}
+              <ModeToggle />
+
+              {/* Realtime Notifications Dropdown */}
+              <NotificationBell />
+
+              {/* User Account Menu */}
+              {user ? <UserAccountMenu user={user} /> : null}
+            </div>
+          </div>
+        </header>
+
+        {/* Dashboard Dynamic Page Body */}
+        <main className="mx-auto max-w-[1600px] p-4 sm:p-6 lg:p-8 animate-fade-in">
+          {children}
+        </main>
+      </div>
+    </div>
+  );
+}
+
+
