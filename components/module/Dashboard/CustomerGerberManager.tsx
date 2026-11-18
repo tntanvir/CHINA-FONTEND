@@ -422,7 +422,7 @@ export default function CustomerGerberManager() {
             <CardContent className="p-0">
               {loading ? (
                 <div className="overflow-x-auto">
-                  <Table>
+                  <Table className="min-w-[680px]">
                     <TableHeader className="bg-slate-50/80 dark:bg-slate-900/40">
                       <TableRow>
                         <TableHead className="font-bold text-xs">File Package</TableHead>
@@ -499,7 +499,7 @@ export default function CustomerGerberManager() {
                 </div>
               ) : (
                 <div className="overflow-x-auto">
-                  <Table>
+                  <Table className="min-w-[680px]">
                     <TableHeader className="bg-slate-50/80 dark:bg-slate-900/40">
                       <TableRow>
                         <TableHead className="font-bold text-xs">File Package</TableHead>

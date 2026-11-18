@@ -365,13 +365,13 @@ export default function HowItWorksClient() {
       {/* ========================================================================= */}
       {/* 1. TOP HERO & INTERACTIVE 4-PHASE STEERING BAR                            */}
       {/* ========================================================================= */}
-      <section className="relative z-10 pt-10 sm:pt-14 pb-10 border-b border-slate-200/80 dark:border-slate-800/80 backdrop-blur-md bg-white/70 dark:bg-slate-900/60">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+      <section className="relative z-10 pt-10 sm:pt-14 pb-10 border-b border-slate-200/80 dark:border-slate-800/80 backdrop-blur-md bg-white/70 dark:bg-slate-900/60 w-full min-w-0">
+        <div className="max-w-6xl mx-auto px-3 sm:px-6 w-full min-w-0">
           {/* Header Row */}
-          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
-            <div className="max-w-3xl">
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 sm:gap-6">
+            <div className="max-w-3xl min-w-0">
               {/* Futuristic Pill Badge */}
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 dark:bg-blue-500/15 border border-blue-500/30 text-blue-600 dark:text-cyan-400 text-xs font-black uppercase tracking-wider mb-3.5 shadow-xs">
+              <div className="inline-flex flex-wrap items-center gap-1.5 sm:gap-2 px-3 py-1 rounded-full bg-blue-500/10 dark:bg-blue-500/15 border border-blue-500/30 text-blue-600 dark:text-cyan-400 text-xs font-black uppercase tracking-wider mb-3.5 shadow-xs">
                 <span className="size-2 rounded-full bg-blue-500 dark:bg-cyan-400 animate-ping" />
                 <span>FT PCB • Smart Factory & Turnkey Assembly</span>
                 <span className="hidden sm:inline-block text-slate-300 dark:text-slate-600">|</span>
@@ -380,22 +380,22 @@ export default function HowItWorksClient() {
                 </span>
               </div>
 
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-[1.12]">
+              <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-[1.12]">
                 <span className="bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 dark:from-white dark:via-blue-100 dark:to-cyan-300 bg-clip-text text-transparent">
                   {t.pageTitle}
                 </span>
               </h1>
 
-              <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 mt-3 leading-relaxed">
+              <p className="text-xs sm:text-sm lg:text-base text-slate-600 dark:text-slate-300 mt-2.5 sm:mt-3 leading-relaxed">
                 {t.pageSubtitle}
               </p>
             </div>
 
             {/* Top Quick Actions */}
-            <div className="flex flex-wrap items-center gap-3 shrink-0">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3 shrink-0 w-full sm:w-auto">
               <Button
                 asChild
-                className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-black text-xs sm:text-sm px-6 py-2.5 rounded-xl shadow-lg shadow-blue-500/25 transition-all hover:scale-[1.02] cursor-pointer"
+                className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-black text-xs sm:text-sm px-5 sm:px-6 py-2.5 rounded-xl shadow-lg shadow-blue-500/25 transition-all hover:scale-[1.02] cursor-pointer w-full sm:w-auto text-center"
               >
                 <Link href="/pcb-quote">
                   <Zap className="mr-2 size-4" />
@@ -405,7 +405,7 @@ export default function HowItWorksClient() {
               <Button
                 asChild
                 variant="outline"
-                className="border-slate-300 dark:border-slate-700 bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm font-bold text-xs sm:text-sm px-5 py-2.5 rounded-xl hover:border-blue-500 hover:text-blue-600 dark:hover:text-cyan-400 cursor-pointer transition-all"
+                className="border-slate-300 dark:border-slate-700 bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm font-bold text-xs sm:text-sm px-4 sm:px-5 py-2.5 rounded-xl hover:border-blue-500 hover:text-blue-600 dark:hover:text-cyan-400 cursor-pointer transition-all w-full sm:w-auto text-center"
               >
                 <Link href="/pcb-assembly">
                   <Cpu className="mr-2 size-4 text-slate-500 dark:text-slate-400" />
@@ -416,7 +416,7 @@ export default function HowItWorksClient() {
           </div>
 
           {/* Smart Factory KPI Ticker Bar */}
-          <div className="mt-8 pt-4 pb-2 border-t border-slate-200/60 dark:border-slate-800/80 flex items-center gap-6 overflow-x-auto text-[11px] font-mono text-slate-600 dark:text-slate-300 scrollbar-none">
+          <div className="mt-6 sm:mt-8 pt-3 sm:pt-4 pb-2 border-t border-slate-200/60 dark:border-slate-800/80 flex items-center gap-4 sm:gap-6 overflow-x-auto text-[10.5px] sm:text-[11px] font-mono text-slate-600 dark:text-slate-300 no-scrollbar">
             <div className="flex items-center gap-2 shrink-0">
               <span className="size-2 rounded-full bg-emerald-500" />
               <span className="font-bold text-slate-800 dark:text-white">Genesis2000 CAM:</span>

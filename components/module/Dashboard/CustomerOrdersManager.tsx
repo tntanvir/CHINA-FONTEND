@@ -517,7 +517,7 @@ export default function CustomerOrdersManager() {
         <CardContent className="p-0">
           {loading ? (
             <div className="overflow-x-auto">
-              <Table>
+              <Table className="min-w-[720px]">
                 <TableHeader className="bg-slate-50/80 dark:bg-slate-900/40">
                   <TableRow>
                     <TableHead className="font-bold text-xs">Order ID</TableHead>
@@ -590,7 +590,7 @@ export default function CustomerOrdersManager() {
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <Table>
+              <Table className="min-w-[720px]">
                 <TableHeader className="bg-slate-50/80 dark:bg-slate-900/40">
                   <TableRow>
                     <TableHead className="font-bold text-xs">Order ID</TableHead>

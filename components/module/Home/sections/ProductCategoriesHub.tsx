@@ -46,7 +46,7 @@ export const productFamiliesData: ProductFamilyItem[] = [
     subtitle: "High-Density FR-4 Multilayer Fabrication",
     category: "Rigid & Multilayer PCB",
     badge: "1-32 Layers",
-    imageUrl: "/images/generated/rigid_pcb.png",
+    imageUrl: "/images/generated/bare_rigid_pcb.png",
     description: "High-precision 1 to 32 layer rigid circuit boards built with Shengyi/KB high-TG170 laminates, controlled differential impedance, and laser microvias.",
     specs: [
       { label: "Layer Count", value: "1-32 Layers" },
@@ -64,7 +64,7 @@ export const productFamiliesData: ProductFamilyItem[] = [
     subtitle: "Laser-Drilled Via-in-Pad Interconnects",
     category: "Rigid & Multilayer PCB",
     badge: "Any-Layer HDI",
-    imageUrl: "/images/generated/hdi_pcb.png",
+    imageUrl: "/images/generated/bare_hdi_pcb.png",
     description: "Fine-line laser microvias, stacked/staggered via-in-pad (VIPPO), and high-density interconnect routing for ultra-miniaturized electronics.",
     specs: [
       { label: "Stackup Architecture", value: "1+N+1 to Any-Layer HDI" },
@@ -82,7 +82,7 @@ export const productFamiliesData: ProductFamilyItem[] = [
     subtitle: "Thermal Power Dissipation & Busbars",
     category: "Rigid & Multilayer PCB",
     badge: "Up to 6oz Copper",
-    imageUrl: "/images/categories/pcb-manufacture/material-1.jpg",
+    imageUrl: "/images/generated/bare_heavy_copper.png",
     description: "High-current circuit boards with up to 6oz (210µm) inner and outer copper weights designed for extreme current loads and rapid thermal transfer.",
     specs: [
       { label: "Copper Thickness", value: "2oz - 6oz (70µm - 210µm)" },
@@ -100,7 +100,7 @@ export const productFamiliesData: ProductFamilyItem[] = [
     subtitle: "Ultra-Thin Dynamic Bending Circuits",
     category: "Flex & Rigid-Flex PCB",
     badge: "1-6 Layers Flex",
-    imageUrl: "/images/generated/flexible_pcb.png",
+    imageUrl: "/images/generated/bare_flex_fpc.png",
     description: "Ultra-thin, featherweight polyimide flex circuits engineered for dynamic bending, tight enclosures, and high-vibration environments.",
     specs: [
       { label: "Base Film", value: "DuPont Pyralux Polyimide" },
@@ -118,7 +118,7 @@ export const productFamiliesData: ProductFamilyItem[] = [
     subtitle: "Hybrid Rigid & Polyimide Flex Integration",
     category: "Flex & Rigid-Flex PCB",
     badge: "Aerospace Grade",
-    imageUrl: "/images/generated/rigid_flex_pcb.png",
+    imageUrl: "/images/generated/bare_rigid_flex.png",
     description: "Eliminates bulky wire harnesses and solder connectors by integrating rigid multi-layer FR-4 sections directly with flexible polyimide circuits.",
     specs: [
       { label: "Structure", value: "2-16 Rigid + Flex Layers" },
@@ -136,7 +136,7 @@ export const productFamiliesData: ProductFamilyItem[] = [
     subtitle: "Superior Heat Dissipation Substrates",
     category: "Advanced & RF Substrates",
     badge: "1-3 W/m.K Thermal",
-    imageUrl: "/images/generated/aluminum_pcb.png",
+    imageUrl: "/images/generated/bare_aluminum_mcpcb.png",
     description: "Metal-backed circuit boards providing direct heat dissipation from high-power components to the chassis without requiring extra heatsinks.",
     specs: [
       { label: "Thermal Conductivity", value: "1.0 - 3.0 W/m.K" },
@@ -154,7 +154,7 @@ export const productFamiliesData: ProductFamilyItem[] = [
     subtitle: "Low Loss Hydrocarbon & PTFE Substrates",
     category: "Advanced & RF Substrates",
     badge: "Rogers / PTFE",
-    imageUrl: "/images/generated/high_freq_pcb.png",
+    imageUrl: "/images/generated/bare_rogers_rf.png",
     description: "Low dielectric loss (Df 0.002) and controlled dielectric constant (Dk 2.2 - 10.2) laminates engineered for high-frequency signal integrity up to 77GHz+.",
     specs: [
       { label: "Laminate Types", value: "Rogers RO4350B, RO4003C, Taconic" },
@@ -172,7 +172,7 @@ export const productFamiliesData: ProductFamilyItem[] = [
     subtitle: "High Thermal Dissipation Base for Power Systems",
     category: "Specialty & Metal Core PCB",
     badge: "1-4W/m-K Thermal Base",
-    imageUrl: "/images/generated/aluminum_pcb.png",
+    imageUrl: "/images/generated/bare_aluminum_mcpcb.png",
     description: "Thermally conductive insulated metal substrates (IMS) featuring pure aluminum or copper backing, designed for automotive headlights, power converters, and high-intensity LED matrices.",
     specs: [
       { label: "Base Materials", value: "Aluminum (1060/5052), Copper Core" },
@@ -190,7 +190,7 @@ export const productFamiliesData: ProductFamilyItem[] = [
     subtitle: "3oz to 12oz Extreme Current Carrying Bare Boards",
     category: "Specialty & Metal Core PCB",
     badge: "Up to 12oz Copper",
-    imageUrl: "/images/generated/pcb3.png",
+    imageUrl: "/images/generated/bare_heavy_copper.png",
     description: "Heavy copper bare boards with up to 420µm outer/inner copper thickness, engineered to conduct hundreds of amperes without overheating or thermal delamination.",
     specs: [
       { label: "Copper Weight", value: "3oz - 12oz (105µm - 420µm)" },
@@ -208,7 +208,7 @@ export const productFamiliesData: ProductFamilyItem[] = [
     subtitle: "Laser Microvias & Blind/Buried Stacks",
     category: "Specialty & Metal Core PCB",
     badge: "1+N+1 to 4+N+4 HDI",
-    imageUrl: "/images/generated/hdi_pcb.png",
+    imageUrl: "/images/generated/bare_hdi_pcb.png",
     description: "Ultra-compact Any-Layer HDI bare boards with sub-3mil line/space width, copper filled microvias, and stacked laser via structures for ultra-dense packaging.",
     specs: [
       { label: "Microvia Technology", value: "CO2 / UV Laser (0.10mm microvia)" },
@@ -450,7 +450,7 @@ export default function ProductCategoriesHub() {
         {viewMode === "matrix" && (
           <div className="mt-8 overflow-hidden rounded-2xl border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs">
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs">
+              <table className="w-full min-w-[760px] text-left text-xs">
                 <thead>
                   <tr className="border-b border-gray-200 dark:border-slate-800 bg-gray-50/90 dark:bg-slate-800/90 text-gray-700 dark:text-slate-300">
                     <th className="px-5 py-4 font-black text-gray-900 dark:text-white">{catCopy?.labels?.matrixHeaderProduct || "Product Family"}</th>

@@ -54,28 +54,28 @@ export default function BusinessScopePage() {
         <ElectronicsBusinessScope />
 
         {/* Bottom Conversion Banner */}
-        <div className="mt-12 rounded-3xl bg-gradient-to-r from-slate-900 via-amber-950 to-slate-900 border border-amber-900/40 p-8 sm:p-12 text-white shadow-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-          <div className="space-y-2 max-w-2xl">
+        <div className="mt-8 sm:mt-12 rounded-2xl sm:rounded-3xl bg-gradient-to-r from-slate-900 via-amber-950 to-slate-900 border border-amber-900/40 p-5 sm:p-8 lg:p-12 text-white shadow-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-5 sm:gap-6 w-full min-w-0">
+          <div className="space-y-2 max-w-2xl min-w-0">
             <div className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/20 px-3 py-1 text-xs font-black text-amber-300">
-              <ShieldCheck className="size-4" />
-              <span>Direct Source Factory Turnkey Assurance</span>
+              <ShieldCheck className="size-4 shrink-0" />
+              <span className="truncate">Direct Source Factory Turnkey Assurance</span>
             </div>
-            <h3 className="text-2xl sm:text-3xl font-black">
+            <h3 className="text-xl sm:text-2xl lg:text-3xl font-black leading-tight">
               Need Custom PCB Design, Diagnostics or Sourcing?
             </h3>
-            <p className="text-slate-300 text-sm leading-relaxed">
+            <p className="text-slate-300 text-xs sm:text-sm leading-relaxed">
               Contact our engineering team in Wuping and Shenzhen for rapid DFM reviews, genuine component BOM matching, or prototype assembly.
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3">
-            <Button asChild size="lg" className="rounded-full px-8 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black shadow-lg">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3 w-full sm:w-auto shrink-0">
+            <Button asChild size="lg" className="w-full sm:w-auto rounded-full px-5 sm:px-8 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black shadow-lg text-xs sm:text-sm text-center">
               <Link href="/pcb-quote">
                 <span>Start PCB Quote</span>
                 <ArrowRight className="size-4 ml-1.5" />
               </Link>
             </Button>
-            <Button asChild variant="outline" size="lg" className="rounded-full px-6 bg-slate-800 text-white border-slate-700 hover:bg-slate-700">
+            <Button asChild variant="outline" size="lg" className="w-full sm:w-auto rounded-full px-5 sm:px-6 bg-slate-800 text-white border-slate-700 hover:bg-slate-700 text-xs sm:text-sm text-center">
               <Link href="/contact">Contact Engineers</Link>
             </Button>
           </div>

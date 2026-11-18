@@ -308,14 +308,14 @@ export default function InteractiveProcessCapabilities() {
   return (
     <div className="space-y-6">
       {/* Controls: Search and Categories */}
-      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 sm:gap-4 w-full min-w-0">
         {/* Category Filter Pills with Sliding Indicator */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none relative">
+        <div className="flex items-center gap-1 sm:gap-1.5 overflow-x-auto pb-1 no-scrollbar relative w-full min-w-0">
           {categories.map((cat) => (
             <button
               key={cat.key}
               onClick={() => setActiveCategory(cat.key)}
-              className={`relative px-3.5 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
+              className={`relative px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-bold transition-all whitespace-nowrap cursor-pointer shrink-0 ${
                 activeCategory === cat.key
                   ? "text-white"
                   : "bg-white dark:bg-slate-800 text-gray-700 dark:text-slate-300 border border-gray-200 dark:border-slate-700 hover:border-blue-500/50"
@@ -334,7 +334,7 @@ export default function InteractiveProcessCapabilities() {
         </div>
 
         {/* Live Search Input */}
-        <div className="relative min-w-[240px]">
+        <div className="relative w-full md:w-auto md:min-w-[240px] shrink-0">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-3.5 text-gray-400" />
           <input
             type="text"
@@ -351,9 +351,9 @@ export default function InteractiveProcessCapabilities() {
       </div>
 
       {/* Specifications Table with Smooth Row Transitions */}
-      <div className="rounded-3xl border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-md overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+      <div className="rounded-2xl sm:rounded-3xl border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-md overflow-hidden w-full min-w-0">
+        <div className="overflow-x-auto no-scrollbar">
+          <table className="w-full text-left border-collapse min-w-[540px]">
             <thead>
               <tr className="border-b border-gray-200 dark:border-slate-800 bg-gray-50/80 dark:bg-slate-800/80 text-[11px] font-black uppercase tracking-wider text-gray-500 dark:text-slate-400">
                 <th className="py-3 px-5">

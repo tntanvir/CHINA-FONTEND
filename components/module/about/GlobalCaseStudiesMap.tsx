@@ -317,7 +317,7 @@ export default function GlobalCaseStudiesMap() {
             <button
               key={study.id}
               onClick={() => setSelectedId(study.id)}
-              className={`flex items-center gap-2 px-5 py-3 rounded-2xl text-xs md:text-sm font-bold transition-all border cursor-pointer ${
+              className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2 sm:py-3 rounded-xl sm:rounded-2xl text-[11px] sm:text-xs md:text-sm font-bold transition-all border cursor-pointer ${
                 isSelected
                   ? "bg-slate-900 dark:bg-white text-white dark:text-slate-950 border-slate-900 dark:border-white shadow-xl scale-[1.03]"
                   : "bg-white/80 dark:bg-slate-900/80 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:border-slate-400"

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { LanguageProvider } from "@/components/providers/language-provider";
@@ -9,6 +9,17 @@ import { siteConfig } from "@/lib/site";
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
 import { Toaster } from "sonner";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#060913" },
+  ],
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
